@@ -1,0 +1,33 @@
+version: "3.8"
+
+services:
+
+  postgres:
+    image: postgres:12
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=raspberrypi
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+
+  camera:
+    image: camera:latest
+    build:
+      context: modules/camera
+      dockerfile: docker/Dockerfile
+    restart: always
+    environment:
+      WORKERS: 3
+      CAMERA_ID: 0
+      FRAME_RATE: 30
+      VIDEO_SIZE: 640x480
+    devices:
+      - /dev/video0:/dev/video0
+    ports:
+      - "8000:8000"
+
+volumes:
+  postgres_data:

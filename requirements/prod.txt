@@ -1,0 +1,2 @@
+-r ../modules/admin/requirements/prod.txt
+-r ../modules/camera_webrtc/requirements/prod.txt

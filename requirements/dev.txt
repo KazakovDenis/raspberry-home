@@ -1,0 +1,6 @@
+-r ../modules/admin/requirements/dev.txt
+-r ../modules/camera_webrtc/requirements/dev.txt
+
+flake8
+mypy
+pytest

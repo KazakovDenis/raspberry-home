@@ -16,9 +16,9 @@ services:
   camera:
     image: camera:latest
     build:
-      context: modules/camera
+      context: src/camera
       dockerfile: docker/Dockerfile
-    restart: always
+    restart: on-failure
     environment:
       WORKERS: 3
       CAMERA_ID: 0
@@ -26,8 +26,8 @@ services:
       VIDEO_SIZE: 640x480
     devices:
       - /dev/video0:/dev/video0
-    ports:
-      - "8000:8000"
+    # TODO: redo to ports
+    network_mode: host
 
 volumes:
   postgres_data:

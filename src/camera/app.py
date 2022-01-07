@@ -1,6 +1,5 @@
 from fastapi import FastAPI
 from starlette.staticfiles import StaticFiles
-
 from webrtc.connection import WebRTCConnection
 from webrtc.utils import Player
 

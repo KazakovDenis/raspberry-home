@@ -1,10 +1,9 @@
 from aiortc import RTCSessionDescription
+from app import app
 from pydantic import BaseModel
 from starlette.responses import JSONResponse
-
-from app import app
 from webrtc.connection import WebRTCConnection
-from webrtc.utils import html_response, create_local_tracks, TrackType
+from webrtc.utils import TrackType, create_local_tracks, html_response
 
 
 @app.get('/')

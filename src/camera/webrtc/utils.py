@@ -1,9 +1,8 @@
 from functools import cache
 
-from aiortc.contrib.media import MediaRelay, MediaPlayer
-from starlette.responses import HTMLResponse
-
 import settings
+from aiortc.contrib.media import MediaPlayer, MediaRelay
+from starlette.responses import HTMLResponse
 from video.converters import VideoTrackConverter
 
 

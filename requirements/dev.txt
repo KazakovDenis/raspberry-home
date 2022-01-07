@@ -1,6 +1,7 @@
--r ../modules/admin/requirements/dev.txt
--r ../modules/camera_webrtc/requirements/dev.txt
+-r ../src/admin/requirements/dev.txt
+-r ../src/camera/requirements/dev.txt
 
 flake8
+isort
 mypy
 pytest

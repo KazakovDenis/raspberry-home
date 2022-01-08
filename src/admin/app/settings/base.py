@@ -1,11 +1,15 @@
 from pathlib import Path
 
+from environs import Env
+
+
+env = Env()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = '!0t6xy74e7i4qb%2kt*6au_+0g6cb3#*6*0ysetz5c083r228w'
+SECRET_KEY = env.str('ADMIN_SECRET_KEY', default='secret')
 
-DEBUG = True
+DEBUG = env.bool('ADMIN_DEBUG', default=False)
 
 ALLOWED_HOSTS = ['*']
 
@@ -52,11 +56,11 @@ WSGI_APPLICATION = 'app.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'raspberrypi',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
+        'NAME': env.str('ADMIN_DB_NAME', default='raspberrypi'),
+        'USER': env.str('ADMIN_DB_USER', default='postgres'),
+        'PASSWORD': env.str('ADMIN_DB_PASS', default='postgres'),
+        'HOST': env.str('ADMIN_DB_HOST', default='127.0.0.1'),
+        'PORT': env.str('ADMIN_DB_PORT', default='5432'),
     }
 }
 

@@ -1,33 +1,31 @@
 version: "3.8"
 
+x-defaults: &defaults
+  env_file: .env
+
 services:
 
-  postgres:
-    image: postgres:12
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_DB=raspberrypi
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-    ports:
-      - "5432:5432"
-
   camera:
+    <<: *defaults
     image: camera:latest
     build:
       context: src/camera
       dockerfile: docker/Dockerfile
     restart: on-failure
-    environment:
-      WORKERS: 3
-      CAMERA_ID: 0
-      FRAME_RATE: 30
-      VIDEO_SIZE: 640x480
     devices:
       - /dev/video0:/dev/video0
     # TODO: redo to ports
     network_mode: host
+
+  postgres:
+    <<: *defaults
+    image: postgres:12
+    environment:
+      POSTGRES_PASSWORD: $ADMIN_DB_PASS
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
 
 volumes:
   postgres_data:

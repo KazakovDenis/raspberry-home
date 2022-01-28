@@ -2,16 +2,16 @@ version: "3.8"
 
 x-defaults: &defaults
   env_file: .env
+  restart: unless-stopped
 
 services:
-
   camera:
     <<: *defaults
     image: camera:latest
+    container_name: camera
     build:
       context: src/camera
       dockerfile: docker/Dockerfile
-    restart: on-failure
     devices:
       - /dev/video0:/dev/video0
     # TODO: redo to ports
@@ -20,6 +20,7 @@ services:
   postgres:
     <<: *defaults
     image: postgres:12
+    container_name: postgres
     environment:
       POSTGRES_PASSWORD: $ADMIN_DB_PASS
     volumes:

@@ -1,7 +1,0 @@
--r ../src/admin/requirements/dev.txt
--r ../src/camera/requirements/dev.txt
-
-flake8
-isort
-mypy
-pytest

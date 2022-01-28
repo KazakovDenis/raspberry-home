@@ -1,4 +1,0 @@
--r base.txt
-
-opencv-contrib-python-headless  == 4.5.5.62
-uvicorn                         == 0.15.0

@@ -1,2 +1,0 @@
-aiortc       == 1.2.1
-fastapi[all] == 0.70.1

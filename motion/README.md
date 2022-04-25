@@ -7,6 +7,13 @@ daemon           off
 stream_localhost off
 ```
 
+Edit config
+```shell
+# motion.conf
+webcontrol_authentication username:password
+stream_authentication username:password
+```
+
 Install Motion:
 ```shell
 apt install motion

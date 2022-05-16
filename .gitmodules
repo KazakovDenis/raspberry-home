@@ -1,0 +1,3 @@
+[submodule "wirehole"]
+	path = wirehole
+	url = git@github.com:IAmStoxe/wirehole.git

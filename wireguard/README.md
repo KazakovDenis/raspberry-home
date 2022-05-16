@@ -1,4 +1,4 @@
-# VPN with WireGuard
+# VPN with WireGuard (SEE WIREHOLE INSTEAD)
 
 ## Server
 ### Installation

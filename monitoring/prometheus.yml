@@ -9,7 +9,7 @@ scrape_configs:
 
   - job_name: "node"
     static_configs:
-    - targets: ["node-exporter:9100"]
+    - targets: ["vps:9100", "raspberry:9100"]
 
 remote_write:
   - url: "<Your Prometheus in Grafana cloud remote_write endpoint>"

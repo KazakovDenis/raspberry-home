@@ -8,9 +8,9 @@ volumes:
   prometheus_data: {}
 
 services:
-  node-exporter:
+  vps:
     image: prom/node-exporter:latest
-    container_name: node-exporter
+    container_name: vps
     restart: unless-stopped
     volumes:
       - /proc:/host/proc:ro

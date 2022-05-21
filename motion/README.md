@@ -7,10 +7,19 @@ daemon           off
 stream_localhost off
 ```
 
+Generate SSL certificate:
+```shell
+openssl req -x509 -nodes -days 3650 -newkey rsa:2048 -out motion.crt -keyout motion.key
+chmod motion:motion motion.crt
+chmod motion:motion motion.key
+```
+
 Edit config
 ```shell
 # motion.conf
 stream_authentication username:password
+webcontrol_cert       /full/path/to/certificate.pem
+webcontrol_key        /full/path/to/privatekey.pem
 ```
 
 Install Motion:

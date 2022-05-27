@@ -34,3 +34,6 @@ docker-compose up -d
 
 ## Sources
 - https://grafana.com/docs/grafana-cloud/quickstart/docker-compose-linux/
+- https://grafana.com/grafana/dashboards/893
+- https://russianblogs.com/article/54981368691/
+- https://habr.com/ru/post/659813/

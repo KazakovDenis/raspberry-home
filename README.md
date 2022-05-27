@@ -1,24 +1,19 @@
 # Raspberry Pi Home
-Домашний проект на VPS + Raspberry Pi 4 Model B.
+Pet project using VPS + Raspberry Pi.
 
-## Компоненты
-- Панель управления
-- Видеонаблюдение
-- Сетевое файловое хранилище
-- Бэкап хранилища в облако
+## Components
+| Component  | Tech                      | 
+|------------|---------------------------|
+| VPN        | Wireguard                 |
+| DNS        | Ubound                    |
+| Adblock    | Pihole                    |
+| CCTV       | Motion + Arecord + FFMpeg |
+| NAS        | Smb + HDD                 |
+| Backup     | Rclone + Yandex.Disk      |
+| Monitoring | Grafana, Prometheus       |
 
-## Требования
-
-### Панель управления
-- Доступ к функциям всех компонентов
-- Настройка компонентов
-- Запуск / остановка компонентов
-- Мониторинг ресурсов
-
-### Видеонаблюдение
-- Просмотр видео онлайн
-- Запись видео в файл:
-  - включение записи
-  - остановка записи
-- Просмотр фото
-- Сохранение фото
+## TODO
+- Merge audios & videos (ffmpeg)
+- Online audio streaming (in addition to Motion)
+- Remote RPI restart / shutdown (probably TG bot)
+- Container monitoring (cAdvisor)

@@ -18,7 +18,7 @@ Edit config
 ```shell
 # motion.conf
 stream_authentication username:password
-webcontrol_cert       /etc/motion/cert/certificate.pem
+webcontrol_cert       /etc/motion/cert/motion.crt
 webcontrol_key        /etc/motion/cert/motion.key
 ```
 
@@ -54,3 +54,4 @@ Then edit `on_movie_start.sh` with given card & device number and uncomment the 
 on_movie_start /etc/motion/on_movie_start.sh %f
 on_movie_end   /etc/motion/on_movie_end.sh %f
 ```
+Ensure these scripts are executable by motion.

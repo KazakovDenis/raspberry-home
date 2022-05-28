@@ -2,11 +2,10 @@
 
 set -eu
 
-# Stop audio recording
+echo "Stopping audio recording: $1"
 ARECORD_PID_FILE="$1.pid"
 ARECORD_PID=$(cat "$ARECORD_PID_FILE")
-
-kill -s SIGTERM "$ARECORD_PID"
+kill -s SIGINT "$ARECORD_PID"
 echo "Audio recording stopped: $1"
 
 # TODO

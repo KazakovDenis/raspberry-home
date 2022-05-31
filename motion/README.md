@@ -49,9 +49,14 @@ Get specification:
 pactl list sinks | grep Specification
 ```
 
-Then edit `on_movie_start.sh` with given card & device number and uncomment the line in `motion.conf`:
+Then edit `on_movie_start.sh` with given card & device number,
+`on_movie_end.sh` with rclone if needed and uncomment the line in `motion.conf`:
 ```
 on_movie_start /etc/motion/on_movie_start.sh %f
 on_movie_end   /etc/motion/on_movie_end.sh %f
 ```
 Ensure these scripts are executable by motion.
+
+## Sources
+- https://motion-project.github.io/
+- http://www.lavrsen.dk/foswiki/bin/view/Motion/SoundAudioRecording

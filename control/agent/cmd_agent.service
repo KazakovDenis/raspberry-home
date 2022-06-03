@@ -1,0 +1,14 @@
+[Unit]
+Description=Command agent
+After=multi-user.target
+After=network.target
+
+[Service]
+Type=simple
+Restart=always
+WorkingDirectory=/opt/agent
+#Environment=ENABLE_SSL=""
+ExecStart=/usr/bin/python3 agent.py
+
+[Install]
+WantedBy=multi-user.target

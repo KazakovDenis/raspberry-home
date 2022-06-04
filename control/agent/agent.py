@@ -14,9 +14,11 @@ import logging
 import os
 import signal
 import ssl
+import subprocess
 from datetime import datetime
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from json import JSONDecodeError
+from typing import Tuple
 
 
 logging.basicConfig(level=logging.INFO)
@@ -29,7 +31,7 @@ CERT_PATH = '/opt/agent/cert.pem'
 
 def on_signal(*args):
     logging.info('Shutting down the server.')
-    httpd.shutdown()
+    raise KeyboardInterrupt
 
 
 class BadRequest(Exception):
@@ -38,28 +40,27 @@ class BadRequest(Exception):
 
 class Command:
 
-    def exec(self) -> bytes:
+    def exec(self) -> Tuple[int, bytes]:
         raise NotImplementedError
 
 
 class Shutdown(Command):
 
-    def exec(self) -> bytes:
+    def exec(self) -> Tuple[int, bytes]:
         pass
 
 
 class Reboot(Command):
 
-    def exec(self) -> bytes:
+    def exec(self) -> Tuple[int, bytes]:
         pass
 
 
 class TestCommand(Command):
 
-    def exec(self) -> bytes:
-        with open('test_cmd_agent.txt', 'a') as f:
-            f.write(f'TEST {datetime.now()}\n')
-        return b'OK'
+    def exec(self) -> Tuple[int, bytes]:
+        result = subprocess.run(['echo', f'test {datetime.now()}'])
+        return (201, b'OK') if result.returncode == 0 else (500, b'ERROR')
 
 
 commands = {
@@ -70,24 +71,31 @@ commands = {
 
 
 class Handler(BaseHTTPRequestHandler):
-    protocol_version = 'HTTP/1.1'
     error_message_format = '{"code": "%(code)s", "message": "%(message)s", "details": "%(explain)s"}'
     error_content_type = 'application/json'
+
+    def send_response(self, code, message=None):
+        self.log_request(code)
+        self.send_response_only(code, message)
+        self.send_header('Date', self.date_time_string())
+        self.send_header('Content-type', 'application/json')
+        self.end_headers()
+
+    def do_GET(self):
+        self.send_response(200)
+        self.wfile.write(b'OK')
 
     def do_POST(self):
         try:
             cmd = self._validate()
-            result = commands[cmd].exec()
+            code, msg = commands[cmd].exec()
         except BadRequest as e:
             self.send_response(*e.args)
-            self.end_headers()
         except Exception:
             self.send_response(500)
-            self.end_headers()
         else:
-            self.send_response(200)
-            self.end_headers()
-            self.wfile.write(result)
+            self.send_response(code)
+            self.wfile.write(msg)
 
     def _validate(self) -> str:
         try:
@@ -114,4 +122,9 @@ if __name__ == '__main__':
             server_side=True,
         )
     logging.info('Serving on %s:%s', *ADDRESS)
-    httpd.serve_forever()
+    try:
+        httpd.serve_forever()
+    except KeyboardInterrupt:
+        httpd.shutdown()
+        httpd.server_close()
+        logging.info('Server stopped.')

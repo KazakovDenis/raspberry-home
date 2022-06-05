@@ -1,13 +1,14 @@
 """
-Pure standard Python HTTP server to match HTTP requests to system commands in one module.
+HTTP server to match HTTP requests to system commands in one script using only pure standard Python.
 
-1. Put `cmd_agent.service` into `/etc/systemd/system/` directory
+1. Copy to a server and create a symbolic link:
+    $ export APP_DIR=/opt/cmd_agent && mkdir -p $APP_DIR
+    $ sudo ln -s $APP_DIR/cmd_agent.service /etc/systemd/system/cmd_agent.service
 2. Enable and start service:
     $ sudo systemctl enable cmd_agent.service
     $ sudo systemctl start cmd_agent.service
 3. [Optional] Generate certificates to enable SSL:
-    $ mkdir -p /opt/cmd_agent
-    $ openssl req -x509 -newkey rsa:2048 -keyout /opt/cmd_agent/key.pem -out /opt/cmd_agent/cert.pem -days 365
+    $ openssl req -x509 -nodes -days 3650 -newkey rsa:2048 -out $APP_DIR/agent.crt -keyout $APP_DIR/agent.key
 3.1. Enable SSL setting ENABLE_SSL=True
 """
 import json
@@ -32,8 +33,8 @@ AUTH_TOKEN = os.getenv('AUTH_TOKEN')
 ENABLE_SSL = os.getenv('ENABLE_SSL')
 
 ADDRESS = ('0.0.0.0', 443 if ENABLE_SSL else 80)
-CERT_KEY = Path('/opt/cmd_agent/key.pem')
-CERT_PATH = Path('/opt/cmd_agent/cert.pem')
+CERT_KEY = Path('/opt/cmd_agent/agent.key')
+CERT_PATH = Path('/opt/cmd_agent/agent.crt')
 
 
 def shutdown(sig_num, frame):
@@ -52,6 +53,13 @@ class Command:
         raise NotImplementedError
 
 
+class _Test(Command):
+
+    def exec(self) -> Tuple[int, bytes]:
+        result = subprocess.run(['echo', f'test {datetime.now()}'])
+        return (201, b'OK') if result.returncode == 0 else (500, b'ERROR')
+
+
 class Shutdown(Command):
 
     def exec(self) -> Tuple[int, bytes]:
@@ -66,17 +74,10 @@ class Reboot(Command):
         return (201, b'SCHEDULED') if result.returncode == 0 else (500, b'ERROR')
 
 
-class TestCommand(Command):
-
-    def exec(self) -> Tuple[int, bytes]:
-        result = subprocess.run(['echo', f'test {datetime.now()}'])
-        return (201, b'OK') if result.returncode == 0 else (500, b'ERROR')
-
-
 commands = {
+    'TEST': _Test(),
     'SHUTDOWN': Shutdown(),
     'REBOOT': Reboot(),
-    'TEST': TestCommand(),
 }
 
 

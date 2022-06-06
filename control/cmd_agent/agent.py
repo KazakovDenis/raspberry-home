@@ -10,6 +10,8 @@ HTTP server to match HTTP requests to system commands in one script using only p
 3. [Optional] Generate certificates to enable SSL:
     $ openssl req -x509 -nodes -days 3650 -newkey rsa:2048 -out $APP_DIR/agent.crt -keyout $APP_DIR/agent.key
 3.1. Enable SSL setting ENABLE_SSL=True
+4. Add a firewall rule for port 443 or 80:
+    $ sudo ufw allow 443/tcp comment "Command agent"
 """
 import json
 import logging
@@ -72,6 +74,12 @@ class Reboot(Command):
     def exec(self) -> Tuple[int, bytes]:
         result = subprocess.run(['sudo', 'shutdown', '-r', '+1'])
         return (201, b'SCHEDULED') if result.returncode == 0 else (500, b'ERROR')
+
+
+class StopMotion(Command):
+
+    def exec(self) -> Tuple[int, bytes]:
+        pass
 
 
 commands = {

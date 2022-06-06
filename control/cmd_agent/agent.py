@@ -24,6 +24,9 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from json import JSONDecodeError
 from pathlib import Path
 from typing import Tuple
+from urllib.error import URLError
+from urllib.parse import urljoin
+from urllib.request import urlopen
 
 
 logging.basicConfig(
@@ -33,6 +36,7 @@ logging.basicConfig(
 
 AUTH_TOKEN = os.getenv('AUTH_TOKEN')
 ENABLE_SSL = os.getenv('ENABLE_SSL')
+MOTION_URL = 'https://localhost:8080'
 
 ADDRESS = ('0.0.0.0', 443 if ENABLE_SSL else 80)
 CERT_KEY = Path('/opt/cmd_agent/agent.key')
@@ -77,15 +81,31 @@ class Reboot(Command):
 
 
 class StopMotion(Command):
+    _ctx = None
 
     def exec(self) -> Tuple[int, bytes]:
-        pass
+        try:
+            with urlopen(urljoin(MOTION_URL, '/00000/action/quit'), context=self.ctx) as response:
+                return response.code, response.msg.encode()
+        except URLError:
+            logging.exception('Error during stopping motion.')
+            return 502, b'ERROR'
+
+    @property
+    def ctx(self):
+        if self._ctx:
+            return self._ctx
+        self._ctx = ssl.create_default_context()
+        self._ctx.check_hostname = False
+        self._ctx.verify_mode = ssl.CERT_NONE
+        return self._ctx
 
 
 commands = {
     'TEST': _Test(),
     'SHUTDOWN': Shutdown(),
     'REBOOT': Reboot(),
+    'MOTION_STOP': StopMotion(),
 }
 
 

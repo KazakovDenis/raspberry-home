@@ -54,9 +54,20 @@ class ClientError(Exception):
 
 
 class Command:
+    _ss_ctx = None
 
     def exec(self) -> Tuple[int, bytes]:
         raise NotImplementedError
+
+    @property
+    def ss_ctx(self):
+        """Context to use with self-signed server certs."""
+        if self._ss_ctx:
+            return self._ss_ctx
+        self._ss_ctx = ssl.create_default_context()
+        self._ss_ctx.check_hostname = False
+        self._ss_ctx.verify_mode = ssl.CERT_NONE
+        return self._ss_ctx
 
 
 class _Test(Command):
@@ -67,38 +78,33 @@ class _Test(Command):
 
 
 class Shutdown(Command):
+    command = ['sudo', 'shutdown', '+1']
+    in_shutdown = False
 
     def exec(self) -> Tuple[int, bytes]:
-        result = subprocess.run(['sudo', 'shutdown', '+1'])
-        return (201, b'SCHEDULED') if result.returncode == 0 else (500, b'ERROR')
+        if Shutdown.in_shutdown:
+            return 423, b'IN_SHUTDOWN'
+
+        result = subprocess.run(self.command)
+        if result.returncode == 0:
+            Shutdown.in_shutdown = True
+            return 201, b'SCHEDULED'
+        return 500, b'ERROR'
 
 
-class Reboot(Command):
-
-    def exec(self) -> Tuple[int, bytes]:
-        result = subprocess.run(['sudo', 'shutdown', '-r', '+1'])
-        return (201, b'SCHEDULED') if result.returncode == 0 else (500, b'ERROR')
+class Reboot(Shutdown):
+    command = ['sudo', 'shutdown', '-r', '+1']
 
 
 class StopMotion(Command):
-    _ctx = None
 
     def exec(self) -> Tuple[int, bytes]:
         try:
-            with urlopen(urljoin(MOTION_URL, '/00000/action/quit'), context=self.ctx) as response:
+            with urlopen(urljoin(MOTION_URL, '/00000/action/quit'), context=self.ss_ctx) as response:
                 return response.code, response.msg.encode()
         except URLError:
             logging.exception('Error during stopping motion.')
             return 502, b'ERROR'
-
-    @property
-    def ctx(self):
-        if self._ctx:
-            return self._ctx
-        self._ctx = ssl.create_default_context()
-        self._ctx.check_hostname = False
-        self._ctx.verify_mode = ssl.CERT_NONE
-        return self._ctx
 
 
 commands = {

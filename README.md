@@ -2,16 +2,16 @@
 Pet project using VPS + Raspberry Pi.
 
 ## Components
-| Component     | Tech                      | 
-|---------------|---------------------------|
-| Control panel | Telegram bot / Python     |
-| VPN           | Wireguard                 |
-| DNS           | Ubound                    |
-| Adblock       | Pihole                    |
-| CCTV          | Motion + Arecord + FFMpeg |
-| NAS           | Smb + HDD                 |
-| Backup        | Rclone + Yandex.Disk      |
-| Monitoring    | Grafana, Prometheus       |
+| Component    | Tech                      | 
+|--------------|---------------------------|
+| Control unit | Telegram bot / Python     |
+| VPN          | Wireguard                 |
+| DNS          | Ubound                    |
+| Adblock      | Pihole                    |
+| CCTV         | Motion + Arecord + FFMpeg |
+| NAS          | Smb + HDD                 |
+| Backup       | Rclone + Yandex.Disk      |
+| Monitoring   | Grafana, Prometheus       |
 
 ## TODO
 - Remote RPI restart / shutdown (probably TG bot)

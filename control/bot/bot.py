@@ -9,36 +9,70 @@ Available commands:
     motion_event_start - Start a Motion event
     motion_event_stop - Stop a Motion event
 """
-import logging
-import os
-
 from aiogram import Bot, Dispatcher, executor, types
+from aiogram.contrib.fsm_storage.files import JSONStorage
+from aiogram.contrib.middlewares.logging import LoggingMiddleware
+
+from . import settings
+from .adapters import motion, pi
 
 
-API_TOKEN = os.getenv('BOT_API_TOKEN')
-OWNER_ID = int(os.getenv('BOT_OWNER_ID', 0))
-assert API_TOKEN, 'No token specified'
-
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
+dp = Dispatcher(
+    bot=Bot(token=settings.API_TOKEN),
+    storage=JSONStorage(path=settings.FILE),
 )
-
-bot = Bot(token=API_TOKEN)
-dp = Dispatcher(bot)
+dp.middleware.setup(LoggingMiddleware())
 
 
-@dp.message_handler(commands=['start', 'help'])
-async def send_welcome(message: types.Message):
-    if message.from_user != OWNER_ID:
-        await message.reply("Sorry, you can't send messages to this bot.")
-    await message.reply('Hello!')
+@dp.message_handler(commands=['pi_shutdown'], user_id=settings.OWNER_ID)
+async def pi_shutdown(message: types.Message):
+    result = await pi.shutdown()
+    await message.reply(result)
 
 
-@dp.message_handler()
-async def echo(message: types.Message):
-    await message.answer(message.text)
+@dp.message_handler(commands=['pi_reboot'], user_id=settings.OWNER_ID)
+async def pi_reboot(message: types.Message):
+    result = await pi.reboot()
+    await message.reply(result)
+
+
+@dp.message_handler(commands=['pi_temp'], user_id=settings.OWNER_ID)
+async def pi_temp(message: types.Message):
+    result = await pi.temperature()
+    await message.reply(result)
+
+
+@dp.message_handler(commands=['motion_restart'], user_id=settings.OWNER_ID)
+async def motion_restart(message: types.Message):
+    result = await motion.restart()
+    await message.reply(result)
+
+
+@dp.message_handler(commands=['motion_quit'], user_id=settings.OWNER_ID)
+async def motion_quit(message: types.Message):
+    result = await motion.quit()
+    await message.reply(result)
+
+
+@dp.message_handler(commands=['motion_event_start'], user_id=settings.OWNER_ID)
+async def motion_event_start(message: types.Message):
+    result = await motion.event_start()
+    await message.reply(result)
+
+
+@dp.message_handler(commands=['motion_event_stop'], user_id=settings.OWNER_ID)
+async def motion_event_stop(message: types.Message):
+    result = await motion.event_stop()
+    await message.reply(result)
 
 
 if __name__ == '__main__':
-    executor.start_polling(dp, skip_updates=True)
+    if settings.USE_HOOK:
+        executor.start_webhook(
+            dispatcher=dp,
+            webhook_path=settings.HOOK_PATH,
+            host=settings.HOST,
+            port=settings.PORT,
+        )
+    else:
+        executor.start_polling(dp)

@@ -4,6 +4,7 @@ from environs import Env
 
 
 env = Env()
+env.read_env()
 
 logging.basicConfig(
     level=logging.INFO,
@@ -13,8 +14,9 @@ logging.basicConfig(
 API_TOKEN = env('API_TOKEN', default=None)
 assert API_TOKEN, 'No token specified'
 
+BOT_NAME = b'Control-Unit-Bot'
 OWNER_ID = env.int('OWNER_ID', default=0)
-FILE = env('FILE', default='bot_data.json')
+FILE = env('FILE', default='data/storage.json')
 
 # Webhook params
 USE_HOOK = env.bool('USE_HOOK', default=False)

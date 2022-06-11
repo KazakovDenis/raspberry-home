@@ -1,5 +1,11 @@
 from httpx import AsyncClient
 
+from ..bot import settings
+
 
 class HTTPAdapter(AsyncClient):
-    pass
+
+    def __init__(self, **kwargs):
+        headers = kwargs.pop('headers', {})
+        headers.setdefault(b'User-Agent', settings.BOT_NAME)
+        super().__init__(headers=headers, **kwargs)

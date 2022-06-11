@@ -1,5 +1,9 @@
-from control.bot import settings
-from control.bot.adapters.base import HTTPAdapter
+import logging
+
+from httpx import HTTPError
+
+from ..bot import settings
+from .base import HTTPAdapter
 
 
 class RaspberryPi(HTTPAdapter):
@@ -24,7 +28,11 @@ class RaspberryPi(HTTPAdapter):
             'command': cmd.upper(),
             'token': settings.PI_TOKEN,
         }
-        response = await self.post('/', json=data)
+        try:
+            response = await self.post('/', json=data)
+        except HTTPError as e:
+            logging.exception('Error during %s request', cmd)
+            return f'Error: {e.__class__.__name__}'
         return response.text
 
 

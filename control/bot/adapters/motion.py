@@ -1,8 +1,13 @@
-from control.bot import settings
-from control.bot.adapters.base import HTTPAdapter
+import logging
+
+from httpx import HTTPError
+
+from ..bot import settings
+from .base import HTTPAdapter
 
 
 class Motion(HTTPAdapter):
+    api_path = '/0000/action/{}'
 
     def __init__(self):
         super().__init__(
@@ -11,17 +16,25 @@ class Motion(HTTPAdapter):
             verify=False,
         )
 
-    async def restart(self):
-        pass
+    async def restart(self) -> str:
+        return await self._invoke_cmd('restart')
 
-    async def quit(self):
-        pass
+    async def quit(self) -> str:
+        return await self._invoke_cmd('quit')
 
-    async def event_start(self):
-        pass
+    async def event_start(self) -> str:
+        return await self._invoke_cmd('eventstart')
 
-    async def event_stop(self):
-        pass
+    async def event_stop(self) -> str:
+        return await self._invoke_cmd('eventend')
+
+    async def _invoke_cmd(self, cmd: str) -> str:
+        try:
+            response = await self.get(self.api_path.format(cmd))
+        except HTTPError as e:
+            logging.exception('Error during %s request', cmd)
+            return f'Error: {e.__class__.__name__}'
+        return 'OK' if response.status_code < 400 else 'ERROR'
 
 
 motion = Motion()

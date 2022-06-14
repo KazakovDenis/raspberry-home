@@ -96,19 +96,35 @@ class Reboot(Shutdown):
     command = ['sudo', 'shutdown', '-r', '+1']
 
 
-class StopMotion(Command):
+class Temperature(Shutdown):
+    command = ['sudo', 'vcgencmd', 'measure_temp']
+
+    def exec(self) -> Tuple[int, bytes]:
+        result = subprocess.run(self.command, capture_output=True)
+        if result.returncode == 0:
+            return 201, result.stdout
+        return 500, b'ERROR'
+
+
+class _Motion(Command):
+    action: str
 
     def exec(self) -> Tuple[int, bytes]:
         try:
-            with urlopen(urljoin(MOTION_URL, '/00000/action/quit'), context=self.ss_ctx) as response:
+            with urlopen(urljoin(MOTION_URL, f'/00000/action/{self.action}'), context=self.ss_ctx) as response:
                 return response.code, response.msg.encode()
         except URLError:
-            logging.exception('Error during stopping motion.')
+            logging.exception('Error during executing motion command: %s', self.action)
             return 502, b'ERROR'
+
+
+class StopMotion(_Motion):
+    action = 'quit'
 
 
 commands = {
     'TEST': _Test(),
+    'TEMPERATURE': Temperature(),
     'SHUTDOWN': Shutdown(),
     'REBOOT': Reboot(),
     'MOTION_STOP': StopMotion(),

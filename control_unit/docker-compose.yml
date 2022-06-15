@@ -3,7 +3,7 @@ version: "3.9"
 services:
   bot:
     image: control_unit_bot:latest
-    command: python bot.py
+    command: python -m bot.main
     restart: unless-stopped
     # paths are relative to wirehole compose
     env_file:
@@ -11,8 +11,6 @@ services:
     volumes:
       - "../control_unit/bot/data:/app/data"
     network_mode: container:wireguard
-    expose:
-      - 8000
 
   # Add bot service to wireguard network with a reverse path filtering
   # https://github.com/IAmStoxe/wirehole/issues/49#issuecomment-924947950

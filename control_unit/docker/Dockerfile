@@ -12,5 +12,5 @@ RUN poetry install --no-interaction --no-dev --remove-untracked
 
 FROM base
 WORKDIR /app
-COPY bot/ /app/
+COPY bot/ /app/bot/
 ENTRYPOINT ["./entrypoint.sh"]

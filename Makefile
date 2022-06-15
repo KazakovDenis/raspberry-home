@@ -32,15 +32,16 @@ bot_build:
 	tar -czvf ${DIST_DIR}/${BOT_ARCHIVE} ${DIST_DIR}/${BOT_TMP} ${DIST_DIR}/${TMP_COMPOSE}
 	rm ${DIST_DIR}/${BOT_TMP} ${DIST_DIR}/${TMP_COMPOSE}
 
+PROD_COMPOSE="docker compose -f ${WIREHOLE_REMOTE_COMPOSE} -f ${BOT_REMOTE_COMPOSE} --profile prod"
+
 bot_deploy:
 	scp ${DIST_DIR}/${BOT_ARCHIVE} vps:
 	ssh -t vps "\
 		tar -xvf ${BOT_ARCHIVE} && \
+		${PROD_COMPOSE} rm --stop bot && \
+		docker rmi ${BOT_IMAGE} && \
 		docker load -i ${DIST_DIR}/${BOT_TMP} && \
-		mv ${DIST_DIR}/${TMP_COMPOSE} ${BOT_REMOTE_COMPOSE} \
-		rm -R ${DIST_DIR} && rm ${BOT_ARCHIVE} \
-	"
-	ssh -t vps "\
-		docker-compose -f ${WIREHOLE_REMOTE_COMPOSE} -f ${BOT_REMOTE_COMPOSE} \
-		--profile prod up -d --force-recreate bot \
+		sudo mv ${DIST_DIR}/${TMP_COMPOSE} ${BOT_REMOTE_COMPOSE} && \
+		rm -r ${DIST_DIR} ${BOT_ARCHIVE} && \
+		${PROD_COMPOSE} up -d --force-recreate bot \
 	"

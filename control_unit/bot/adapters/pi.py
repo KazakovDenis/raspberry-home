@@ -2,7 +2,7 @@ import logging
 
 from httpx import HTTPError
 
-from ..bot import settings
+from .. import settings
 from .base import HTTPAdapter
 
 

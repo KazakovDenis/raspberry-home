@@ -43,3 +43,13 @@ services:
       - 9090
     networks:
       - monitoring
+
+  promtail:
+    image: grafana/promtail:master
+    container_name: promtail
+    restart: unless-stopped
+    volumes:
+      - ./promtail.yml:/etc/promtail/config.yml
+      - /var/log:/var/log
+    command:
+      - '-config.file=/etc/promtail/config.yml'

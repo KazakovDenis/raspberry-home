@@ -1,5 +1,11 @@
 version: "3.9"
 
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "5"
+
 services:
   bot:
     image: control_unit_bot:latest
@@ -11,6 +17,7 @@ services:
     volumes:
       - "../control_unit/bot/data:/app/data"
     network_mode: container:wireguard
+    logging: *default-logging
 
   # Add bot service to wireguard network with a reverse path filtering
   # https://github.com/IAmStoxe/wirehole/issues/49#issuecomment-924947950

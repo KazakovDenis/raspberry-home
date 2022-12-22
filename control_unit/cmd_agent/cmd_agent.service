@@ -9,6 +9,8 @@ WorkingDirectory=/opt/cmd_agent
 ExecStart=/usr/bin/python3 agent.py
 Environment="AUTH_TOKEN="
 Environment="ENABLE_SSL="
+StandardOutput=append:/var/log/cmd_agent/output.log
+StandardError=append:/var/log/cmd_agent/error.log
 
 [Install]
 WantedBy=multi-user.target

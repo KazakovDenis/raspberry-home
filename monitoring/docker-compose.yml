@@ -50,6 +50,9 @@ services:
     restart: unless-stopped
     volumes:
       - ./promtail.yml:/etc/promtail/config.yml
-      - /var/log:/var/log
+      - /var/log/cmd_agent/:/var/log/cmd_agent/
+      - /var/log/motion/:/var/log/motion/
+      - /var/log/rclone/:/var/log/rclone/
+      - /var/log/samba/:/var/log/samba/
     command:
       - '-config.file=/etc/promtail/config.yml'

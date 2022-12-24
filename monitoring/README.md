@@ -4,7 +4,8 @@
 ### 1. Pre-requisites
 - Create Grafana cloud account
 - Add API key
-- Edit prometheus.yml 
+- Edit prometheus.yml & promtail.yml
+- Install `logrotate` and add configs to /etc/logrotate.d/
 
 ### 2. Run
 ```shell
@@ -37,3 +38,4 @@ docker-compose up -d
 - https://grafana.com/grafana/dashboards/893
 - https://russianblogs.com/article/54981368691/
 - https://habr.com/ru/post/659813/
+- https://losst.pro/nastrojka-logrotate

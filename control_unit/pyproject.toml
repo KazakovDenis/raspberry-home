@@ -6,7 +6,7 @@ build-backend = "poetry.core.masonry.api"
 name = "raspberry-home"
 version = "0.1.0"
 description = "Raspberry Pi + VPS home project"
-authors = ["Denis Kazakov <denis@kazakov.ru.net"]
+authors = ["Denis Kazakov <denis@kazakov.ru.net>"]
 repository = "https://github.com/KazakovDenis/raspberry-home"
 license = "MIT"
 

@@ -1,6 +1,9 @@
+install:
+	poetry -C control_unit install
+
 precommit:
-	poetry run isort -c .
-	poetry run pflake8
+	poetry -C control_unit run isort --sp control_unit/pyproject.toml .
+	poetry -C control_unit run pflake8 --config control_unit/pyproject.toml
 
 agent_deploy:
 	scp control_unit/cmd_agent/agent.py pi:
@@ -15,12 +18,23 @@ TMP_COMPOSE="bot.yml"
 BOT_DEV_COMPOSE="control_unit/docker-compose.override.yml"
 BOT_LOCAL_COMPOSE="control_unit/docker-compose.yml"
 BOT_REMOTE_COMPOSE="/opt/control_unit/docker-compose.yml"
+BOT_NAME="control_unit_bot"
 
 WIREHOLE_LOCAL_COMPOSE="wirehole/docker-compose.yml"
 WIREHOLE_REMOTE_COMPOSE="/opt/wirehole/docker-compose.yml"
 
 bot_config_dev:
 	cd control_unit && docker compose config | tee _dev.yml 1>/dev/null
+
+bot_run_dev:
+	docker run --rm --name ${BOT_NAME} \
+		-v ./control_unit/.env:/app/.env \
+		-v ./control_unit/bot/data:/app/bot/data \
+		${BOT_NAME}:latest \
+		python -m bot.main
+
+bot_exec_dev:
+	docker exec -it ${BOT_NAME} bash
 
 bot_config_prod:
 	docker compose --profile prod -f ${WIREHOLE_LOCAL_COMPOSE} -f ${BOT_LOCAL_COMPOSE} config | tee _prod.yml 1>/dev/null

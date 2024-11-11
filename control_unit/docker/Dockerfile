@@ -1,8 +1,15 @@
 FROM python:3.9-slim as base
+
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PIP_DISABLE_PIP_VERSION_CHECK=1
-RUN pip install --no-cache-dir poetry
+
+RUN apt-get update && \
+    apt-get install -y curl build-essential && \
+    curl -sSL https://install.python-poetry.org | python3 - && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+ENV PATH="/root/.local/bin:$PATH"
 
 WORKDIR /app
 COPY poetry.lock pyproject.toml docker/entrypoint.sh /app/

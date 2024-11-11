@@ -30,7 +30,7 @@ bot_run_dev:
 	docker run --rm --name ${BOT_NAME} \
 		-v ./control_unit/.env:/app/.env \
 		-v ./control_unit/bot/data:/app/bot/data \
-		${BOT_NAME}:latest \
+		${BOT_NAME}:dev \
 		python -m bot.main
 
 bot_exec_dev:
@@ -41,6 +41,9 @@ bot_config_prod:
 
 bot_build:
 	docker compose -f ${BOT_LOCAL_COMPOSE} -f ${BOT_DEV_COMPOSE} build bot
+
+bot_zip:
+	docker compose -f ${BOT_LOCAL_COMPOSE} build bot
 	docker save ${BOT_IMAGE} -o ${DIST_DIR}/${BOT_TMP}
 	cp ${BOT_LOCAL_COMPOSE} ${DIST_DIR}/${TMP_COMPOSE}
 	tar -czvf ${DIST_DIR}/${BOT_ARCHIVE} ${DIST_DIR}/${BOT_TMP} ${DIST_DIR}/${TMP_COMPOSE}

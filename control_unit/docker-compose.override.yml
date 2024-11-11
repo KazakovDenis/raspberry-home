@@ -1,9 +1,7 @@
-version: "3.9"
-
 services:
   bot:
-    build:
-      dockerfile: docker/Dockerfile
+    image: control_unit_bot:dev
+    platform: ${PLATFORM}
     network_mode: bridge
     ports:
       - "8000:8000"

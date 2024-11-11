@@ -1,5 +1,3 @@
-version: "3.9"
-
 x-logging: &default-logging
   driver: json-file
   options:
@@ -9,6 +7,9 @@ x-logging: &default-logging
 services:
   bot:
     image: control_unit_bot:latest
+    platform: linux/amd64
+    build:
+      dockerfile: docker/Dockerfile
     command: python -m bot.main
     restart: unless-stopped
     # paths are relative to wirehole compose

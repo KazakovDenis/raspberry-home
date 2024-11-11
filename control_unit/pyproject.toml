@@ -31,6 +31,8 @@ multi_line_output = 3
 combine_as_imports = true
 include_trailing_comma = true
 lines_after_imports = 2
+known_first_party = ["adapters", "dispatcher", "handlers", "settings"]
+sections = ['FUTURE', 'STDLIB', 'THIRDPARTY', 'FIRSTPARTY', 'LOCALFOLDER']
 
 [tool.flake8]
 max-line-length = 120

@@ -1,6 +1,6 @@
 from httpx import AsyncClient
 
-from .. import settings
+import settings
 
 
 class HTTPAdapter(AsyncClient):

@@ -2,7 +2,8 @@ import logging
 
 from httpx import HTTPError
 
-from .. import settings
+import settings
+
 from .base import HTTPAdapter
 
 
